@@ -2,66 +2,55 @@ const glitchText = (() =>
 {
 	const glitcher = (() =>
 	{
-		let currString = '';
-		let currNode;
-		let interval;
-	
 		const getRandChar = (() =>
 		{
 			const letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 			const nums = '0123456789';
 			const getRandInt = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
-	
+
 			return () => 
 			{
 				const charPool = getRandInt(0, 1) === 1 ? letters : nums;
 				const randChar = charPool[getRandInt(0, charPool.length - 1)];
-	
+
 				return randChar;
 			}
 		})()
-		
+
 		const writeTo = (node, text) => node.textContent = text;
-	
-		const clearVars = () =>
+
+		const start = (node) =>
 		{
-			currNode = undefined;
-			currString = undefined;
-		}
-	
-		const start = (node, str = '') =>
-		{
-			currNode = node;
-			currString = str;
-			node.textContent = str;
-	
-			interval = setInterval(() =>
+			return setInterval(() =>
 			{
 				const currText = node.textContent;
 				const randChar = getRandChar();
 				const newText = currText.slice(0, -1) + randChar;
-	
+
 				writeTo(node, newText);
 			}, 20);
 		}
-	
-		const close = () =>
+
+		const close = (node, interval, str) =>
 		{
 			clearInterval(interval);
-			writeTo(currNode, currString);
-			clearVars();
+			writeTo(node, str);
 		}
-	
-		const update = (str) =>
+
+		return (node, str = '') =>
 		{
-			currString = str;
-			writeTo(currNode, str);
-		}
-	
-		return {
-			start,
-			close,
-			update,
+			let interval = start(node);
+			let currString = str;
+
+			return {
+				close: () => close(node, interval, currString),
+
+				update: (str) =>
+				{
+					currString = str;
+					writeTo(node, str);
+				},
+			}
 		}
 	})()
 
@@ -70,22 +59,23 @@ const glitchText = (() =>
 		let text = '';
 		let i = 0;
 
-		glitcher.start(node)
+		let glitchInstance = glitcher(node, str);
 		const glitchInterval = setInterval(() =>
 		{
-			if(i === str.length)
+			if (i === str.length)
 			{
 				clearInterval(glitchInterval);
-				glitcher.close();
+				glitchInstance.close();
 			}
 			else
 			{
 				text += str[i];
 				i++;
-				glitcher.update(text);
+				glitchInstance.update(text);
 			}
 		}, speed * 100)
 	}
 })()
 
-const node = document.querySelector('#glitchDiv');
+const nodeA = document.querySelector('#divA');
+const nodeB = document.querySelector('#divB');
