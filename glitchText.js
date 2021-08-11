@@ -21,6 +21,7 @@ const glitchText = (() =>
 
 		const start = (node) =>
 		{
+			node.textContent = '';
 			return setInterval(() =>
 			{
 				const currText = node.textContent;
@@ -76,6 +77,3 @@ const glitchText = (() =>
 		}, speed * 100)
 	}
 })()
-
-const nodeA = document.querySelector('#divA');
-const nodeB = document.querySelector('#divB');

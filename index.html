@@ -3,11 +3,45 @@
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Glitch Text</title>
-	<script src="./main.js" defer></script>
+	<title>GlitchText</title>
+	<link rel="stylesheet" href="style.css">
+	<script src="./glitchText.js"></script>
 </head>
 <body>
-	<div id="divA"></div>
-	<div id="divB"></div>
+	<header>
+		<h1 id="title">Glitch text</h1>
+	</header>
+	<main>
+		<p id="description">Click the button below to see demonstrations of glitched text!</p>
+		<div id="btnContainer">
+			<button id="demoBtn">Glitch!</button>
+		</div>
+		<div id="glitchDivContainer">
+			<div id="glitchedDiv">Text will appear here</div>
+		</div>
+	</main>
+	<footer>
+		<span>Site by: <a href="https://github.com/clikuki" target="_blank">Clikuki</a></span>
+		<span><a href="#">Link to Github repo</a></span>
+	</footer>
+	<script>
+		const stringPool = [
+			'This is a demonstration!',
+			'Here is some text.',
+			'Pretty cool, right?',
+			'Check out my github profile at "www.Github.com/Clikuki"!',
+		]
+
+		const glitchedDiv = document.querySelector('#glitchedDiv');
+		const getRandInt = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
+
+		const demoBtn = document.querySelector('#demoBtn');
+		const btnDemoEvent = () =>
+		{
+			glitchText(glitchedDiv, stringPool[getRandInt(0, stringPool.length - 1)], 1);
+		}
+		
+		demoBtn.addEventListener('click', btnDemoEvent);
+	</script>
 </body>
 </html>

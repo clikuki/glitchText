@@ -1,0 +1,105 @@
+:root
+{
+	--main-bg-color: #000000 /* #3fbfc3 */;
+	--text-color: #ffffff;
+	font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+html, body
+{
+	margin: 0;
+	padding: 0;
+	height: 100%;
+}
+
+body
+{
+	display: flex;
+	flex-direction: column;
+}
+
+header
+{
+	background-color: var(--main-bg-color);
+	color: var(--text-color);
+	font-family: 'Times New Roman', Times, serif;
+	font-size: larger;
+}
+
+main
+{
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+footer
+{
+	color: var(--text-color);
+	background-color: var(--main-bg-color);
+	padding: 10px 0;
+	font-family: monospace;
+	font-size: large;
+	width: 100%;
+	display: flex;
+	justify-content: space-evenly;
+}
+
+a
+{
+	color: inherit;
+}
+
+#title, #description
+{
+	text-align: center;
+}
+
+#glitchDivContainer
+{
+	flex-grow: .5;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#glitchedDiv
+{
+	background-color: #d3d3d3;
+	border-radius: 10px;
+	width: 60vw;
+	height: 100px;
+	font-family: monospace;
+	font-size: x-large;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 10px;
+}
+
+#btnContainer
+{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin: 10px;
+}
+
+#btnContainer > button
+{
+	all: unset;
+	padding: 10px 20px;
+	font-size: medium;
+	user-select: none;
+	background-color: #d3d3d3;
+	cursor: pointer;
+	border-radius: 10px;
+}
+
+#btnContainer > button:hover
+{
+	transition: all .5s ease-in-out;
+	background-color: #c3c3c3;;
+}
