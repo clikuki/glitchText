@@ -1,71 +1,90 @@
 const glitchText = (() =>
 {
-	const letters = 'abcdefghijklmnopqrstuv';
-	const nums = '0123456789';
-	const glitchRange = [5, 10];
-
-	const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
-
-	const writeTo = (node, text) => node.textContent = text;
-
-	/**
-	 * @param {HTMLElement} elem - Element to write to
-	 * @param {String} text - String to write
-	 * @param {Number} speed - Speed to write at (in 1/10 of a second)
-	 */
-	return (elem, text, speed = 1) =>
+	const glitcher = (() =>
 	{
-		return new Promise(resolve =>
+		let currString = '';
+		let currNode;
+		let interval;
+	
+		const getRandChar = (() =>
+		{
+			const letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+			const nums = '0123456789';
+			const getRandInt = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
+	
+			return () => 
 			{
-				let currText = '';
-				let i = 0;
+				const charPool = getRandInt(0, 1) === 1 ? letters : nums;
+				const randChar = charPool[getRandInt(0, charPool.length - 1)];
+	
+				return randChar;
+			}
+		})()
 		
-				const logic = () =>
-				{
-					if(i === text.length) 
-					{
-						clearInterval(logicInterval);
-						resolve(elem);
-					}
-					else
-					{
-						let currChar = text[i];
-						currText += currChar;
-		
-						if(currChar === ' ')
-						{
-							i++;
-							currText += text[i];
-						}
-						
-						i++;
+		const writeTo = (node, text) => node.textContent = text;
+	
+		const clearVars = () =>
+		{
+			currNode = undefined;
+			currString = undefined;
+		}
+	
+		const start = (node, str = '') =>
+		{
+			currNode = node;
+			currString = str;
+			node.textContent = str;
+	
+			interval = setInterval(() =>
+			{
+				const currText = node.textContent;
+				const randChar = getRandChar();
+				const newText = currText.slice(0, -1) + randChar;
+	
+				writeTo(node, newText);
+			}, 20);
+		}
+	
+		const close = () =>
+		{
+			clearInterval(interval);
+			writeTo(currNode, currString);
+			clearVars();
+		}
+	
+		const update = (str) =>
+		{
+			currString = str;
+			writeTo(currNode, str);
+		}
+	
+		return {
+			start,
+			close,
+			update,
+		}
+	})()
 
-						if(i !== text.length)
-						{
-							let j = 0;
-							const writeInterval = setInterval(() =>
-							{
-								if(j === 9)
-								{
-									clearInterval(writeInterval);
-								}
-								else
-								{
-									const randChar = letters[randInt(...glitchRange)];
-									writeTo(elem, currText + randChar);
-									j++;
-								}
-							}, speed * 10)
-						}
-						else
-						{
-							writeTo(elem, currText);
-						}
-					}
-				}
-		
-				const logicInterval = setInterval(logic, speed * 100);
-			})
+	return (node, str, speed = 1) =>
+	{
+		let text = '';
+		let i = 0;
+
+		glitcher.start(node)
+		const glitchInterval = setInterval(() =>
+		{
+			if(i === str.length)
+			{
+				clearInterval(glitchInterval);
+				glitcher.close();
+			}
+			else
+			{
+				text += str[i];
+				i++;
+				glitcher.update(text);
+			}
+		}, speed * 100)
 	}
 })()
 
