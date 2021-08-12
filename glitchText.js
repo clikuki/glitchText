@@ -80,21 +80,25 @@ const glitchText = (() =>
 		let text = '';
 		let i = 0;
 
-		const glitchInstance = glitcher(node, str, true, true);
-		const glitchInterval = setInterval(() =>
+		return new Promise(resolve =>
 		{
-			if (i === str.length)
+			const glitchInstance = glitcher(node, str, true, true);
+			const glitchInterval = setInterval(() =>
 			{
-				clearInterval(glitchInterval);
-				glitchInstance.close();
-			}
-			else
-			{
-				text += str[i];
-				i++;
-				glitchInstance.update(text);
-			}
-		}, speed * 100)
+				if (i === str.length)
+				{
+					clearInterval(glitchInterval);
+					glitchInstance.close();
+					resolve(node);
+				}
+				else
+				{
+					text += str[i];
+					i++;
+					glitchInstance.update(text);
+				}
+			}, speed * 100)
+		})
 	}
 
 	/** 
