@@ -41,8 +41,10 @@
 		const demoBtn = document.querySelector('#demoBtn');
 		const btnDemoEvent = () =>
 		{
-			glitchText(glitchedDiv, stringPool[getRandInt(0, stringPool.length - 1)], 1);
+			glitchText.appear(glitchedDiv, stringPool[getRandInt(0, stringPool.length - 1)], 1);
 		}
+
+		const testNode = document.querySelector('#title')
 		
 		demoBtn.addEventListener('click', btnDemoEvent);
 	</script>

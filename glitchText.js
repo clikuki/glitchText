@@ -21,9 +21,9 @@ const glitchText = (() =>
 			return start + replacementStr + end;
 		}
 
-		const start = (node) =>
+		const start = (node, { clear, glitchEnd }) =>
 		{
-			node.textContent = '';
+			if (clear) node.textContent = '';
 			return setInterval(() =>
 			{
 				let string = node.textContent;
@@ -32,7 +32,7 @@ const glitchText = (() =>
 				{
 					if (char !== ' ')
 					{
-						if (+i === string.length - 1 || getRandInt(0, 6) === 0)
+						if ((glitchEnd && +i === string.length - 1) || getRandInt(0, 6) === 0)
 						{
 							{
 								const randChar = getRandChar();
@@ -42,7 +42,6 @@ const glitchText = (() =>
 					}
 				}
 
-				// console.log(string);
 				writeTo(node, string);
 			}, 50);
 		}
@@ -53,9 +52,9 @@ const glitchText = (() =>
 			writeTo(node, str);
 		}
 
-		return (node, str = '') =>
+		return (node, str = '', clear, glitchEnd) =>
 		{
-			let interval = start(node);
+			let interval = start(node, { clear, glitchEnd });
 			let currString = str;
 
 			return {
@@ -70,12 +69,18 @@ const glitchText = (() =>
 		}
 	})()
 
-	return (node, str, speed = 1) =>
+	/**
+	 * Makes glitchy text appear
+	 * @param {HTMLElement} node - Element to write to
+	 * @param {String} str - String to write
+	 * @param {Number} speed - Speed for the characters to appear at
+	 */
+	const appear = (node, str, speed = 1) =>
 	{
 		let text = '';
 		let i = 0;
 
-		let glitchInstance = glitcher(node, str);
+		const glitchInstance = glitcher(node, str, true, false);
 		const glitchInterval = setInterval(() =>
 		{
 			if (i === str.length)
@@ -91,4 +96,33 @@ const glitchText = (() =>
 			}
 		}, speed * 100)
 	}
+
+	/** 
+	 * Makes existing text look glitchy
+	 * @param {HTMLElement} node - Element to write to
+	 * @returns an object with methods for updating and stopping the glitch effect
+	 */
+	const existing = (node) =>
+	{
+		let currText = node.textContent;
+		const glitchInstance = glitcher(node, currText);
+		const glitchInterval = setInterval(() => glitchInstance.update(currText), 40);
+
+		return {
+			update: (str) =>
+			{
+				currText = str;
+			},
+			close: () =>
+			{
+				clearInterval(glitchInterval);
+				glitchInstance.close();
+			}
+		}
+	}
+
+	return {
+		appear,
+		existing,
+	};
 })()
