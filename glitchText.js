@@ -7,13 +7,9 @@ const glitchText = (() =>
 		const getRandChar = (() =>
 		{
 			const charPool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+			const charPoolLen = charPool.length;
 
-			return () => 
-			{
-				const randChar = charPool[getRandInt(0, charPool.length - 1)];
-
-				return randChar;
-			}
+			return () => charPool[getRandInt(0, charPoolLen - 1)];
 		})()
 
 		const writeTo = (node, text) => node.textContent = text;
