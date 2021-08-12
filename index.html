@@ -38,10 +38,22 @@
 		const glitchedDiv = document.querySelector('#glitchedDiv');
 		const getRandInt = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
 
+		let isFinished = true;
+		let glitchHolder;
 		const demoBtn = document.querySelector('#demoBtn');
 		const btnDemoEvent = () =>
 		{
-			glitchText.appear(glitchedDiv, stringPool[getRandInt(0, stringPool.length - 1)], 1);
+			if(!isFinished) return;
+			glitchHolder && glitchHolder.close();
+			isFinished = false;
+
+			const randString = stringPool[getRandInt(0, stringPool.length - 1)];
+			glitchText.appear(glitchedDiv, randString, 1)
+				.then(() =>
+				{
+					isFinished = true;
+					glitchHolder = glitchText.existing(glitchedDiv);
+				})
 		}
 		
 		demoBtn.addEventListener('click', btnDemoEvent);
