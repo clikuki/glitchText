@@ -92,24 +92,3 @@ const glitchText = (() =>
 		}, speed * 100)
 	}
 })()
-
-const test = (() =>
-{
-
-
-	return (node, str = '') =>
-	{
-		let interval = start(node);
-		let currString = str;
-
-		return {
-			close: () => close(node, interval, currString),
-
-			update: (str) =>
-			{
-				currString = str;
-				writeTo(node, str);
-			},
-		}
-	}
-})()
