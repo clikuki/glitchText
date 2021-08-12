@@ -21,7 +21,7 @@ const glitchText = (() =>
 			return start + replacementStr + end;
 		}
 
-		const start = (node, { clear, glitchEnd }) =>
+		const start = (node, clear, glitchEnd) =>
 		{
 			if (clear) node.textContent = '';
 			return setInterval(() =>
@@ -54,7 +54,7 @@ const glitchText = (() =>
 
 		return (node, str = '', clear, glitchEnd) =>
 		{
-			let interval = start(node, { clear, glitchEnd });
+			let interval = start(node, clear, glitchEnd);
 			let currString = str;
 
 			return {
@@ -80,7 +80,7 @@ const glitchText = (() =>
 		let text = '';
 		let i = 0;
 
-		const glitchInstance = glitcher(node, str, true, false);
+		const glitchInstance = glitcher(node, str, true, true);
 		const glitchInterval = setInterval(() =>
 		{
 			if (i === str.length)
