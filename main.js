@@ -12,7 +12,6 @@ const glitchDiv = document.querySelector('#glitchedDiv');
 const demoBtn = document.querySelector('#demoBtn');
 const glitchKey = glitchText.register(glitchDiv, {
 	speed: 4,
-	chance: 10,
 });
 
 const getRandInt = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);

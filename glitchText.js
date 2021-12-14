@@ -1,6 +1,6 @@
 const glitchText = (() =>
 {
-	const glitchObjs = {};
+	const glitchObjRegistry = {};
 	const charPool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
 	// Some functions to help with random strings and numbers
@@ -9,7 +9,6 @@ const glitchText = (() =>
 	const getRandStr = (len) =>
 	{
 		let str = '';
-
 		for (let i = 0; i < len; i++)
 		{
 			str += getRandChar();
@@ -28,9 +27,9 @@ const glitchText = (() =>
 	{
 		// Make sure key is unique
 		let key;
-		while (!key || glitchObjs[key]) key = getRandStr(20);
+		while (!key || glitchObjRegistry[key]) key = getRandStr(20);
 
-		glitchObjs[key] = {
+		glitchObjRegistry[key] = {
 			elem: node,
 			text: options.text || node.textContent,
 			speed: options.speed || 10, // Depends on refresh rate of user
@@ -46,12 +45,12 @@ const glitchText = (() =>
 	 */
 	const unregister = (key) =>
 	{
-		const glitchElem = glitchObjs[key];
-		if (glitchElem)
+		const glitch = glitchObjRegistry[key];
+		if (glitch)
 		{
 			// Reset text
-			glitchElem.elem.textContent = glitchElem.text;
-			delete glitchObjs[key];
+			glitch.elem.textContent = glitch.text;
+			delete glitchObjRegistry[key];
 		}
 	}
 
@@ -60,7 +59,7 @@ const glitchText = (() =>
 	 * @param {String} key - Key of glitch object
 	 * @returns {Object} A glitch object
 	 */
-	const get = (key) => glitchObjs[key];
+	const get = (key) => glitchObjRegistry[key];
 
 	/**
 	 * Sets string in glitch object
@@ -70,43 +69,47 @@ const glitchText = (() =>
 	 */
 	const set = (key, str, append = false) =>
 	{
-		const glitchObj = glitchObjs[key]
-		if (!glitchObj) return;
-		if (!append) glitchObj.text = '';
+		const glitch = glitchObjRegistry[key]
+		if (!glitch) return;
+		if (!append) glitch.deleteChars = glitch.text.length;
 
-		glitchObj.newText = str;
+		glitch.newText = str;
 	}
+
+	const glitchify = (glitch) => glitch.text.split('').map(char =>
+	{
+		if (getRandInt(1, glitch.chance) === 1) return getRandChar();
+		else return char;
+	}).join('');
 
 	const loop = () =>
 	{
 		requestAnimationFrame(loop);
 
-		for (const key in glitchObjs)
+		for (const key in glitchObjRegistry)
 		{
-			const glitchObj = glitchObjs[key];
+			const glitch = glitchObjRegistry[key];
 
 			// run if curFrame is 0
-			if (!glitchObj.curFrame)
+			if (!glitch.curFrame)
 			{
-				// Add first char to text
-				if (glitchObj.newText)
+				if (glitch.deleteChars)
 				{
-					glitchObj.text += glitchObj.newText[0];
-					glitchObj.newText = glitchObj.newText.slice(1);
+					--glitch.deleteChars;
+					const prevText = glitch.text;
+					glitch.text = prevText.slice(0, -1);
 				}
-				else glitchObj.newText = null;
-
-				// Replace some chars with random char
-				const glitchyStr = glitchObj.text.split('').map(char =>
+				else if (glitch.newText)
 				{
-					if (getRandInt(1, glitchObj.chance) === 1) return getRandChar();
-					else return char;
-				}).join('');
+					glitch.text += glitch.newText[0];
+					glitch.newText = glitch.newText.slice(1);
+				}
+				else glitch.newText = null;
 
-				glitchObj.elem.textContent = glitchyStr;
-				glitchObj.curFrame = glitchObj.speed;
+				glitch.elem.textContent = glitchify(glitch);
+				glitch.curFrame = glitch.speed;
 			}
-			else --glitchObj.curFrame;
+			else --glitch.curFrame;
 		}
 	}
 
