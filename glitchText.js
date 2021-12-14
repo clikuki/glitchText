@@ -1,8 +1,9 @@
 const glitchText = (() =>
 {
-	const nodes = {};
+	const glitchObjs = {};
 	const charPool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
+	// Some functions to help with random strings and numbers
 	const getRandInt = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
 	const getRandChar = () => charPool[getRandInt(0, charPool.length - 1)];
 	const getRandStr = (len) =>
@@ -17,129 +18,105 @@ const glitchText = (() =>
 		return str;
 	}
 
-	const register = (node) =>
+	/**
+	 * Registers node as a glitch object
+	 * @param {HTMLElement} node - Node to put text in
+	 * @param {Object} options - Options for glitch effect
+	 * @returns {String} Key of glitch object
+	 */
+	const register = (node, options = {}) =>
 	{
-		const key = getRandStr(20);
+		// Make sure key is unique
+		let key;
+		while (!key || glitchObjs[key]) key = getRandStr(20);
 
-		nodes[key] = {
+		glitchObjs[key] = {
 			elem: node,
-			text: node.textContent,
+			text: options.text || node.textContent,
+			speed: options.speed || 10, // Depends on refresh rate of user
+			chance: options.chance || 10,
 		}
 
 		return key;
 	}
 
+	/**
+	 * Deletes glitch object
+	 * @param {String} key - Key of glitch object
+	 */
 	const unregister = (key) =>
 	{
-		if (nodes[key]) delete nodes[key];
-	}
-
-	const set = (key, str, charSpeed) =>
-	{
-		const node = nodes[key]
-		if (node)
+		const glitchElem = glitchObjs[key];
+		if (glitchElem)
 		{
-			node.text = str;
-
-			// if(charSpeed) 
-			// else 
-			node.elem.textContent = str;
+			// Reset text
+			glitchElem.elem.textContent = glitchElem.text;
+			delete glitchObjs[key];
 		}
 	}
 
-	const mainLoop = () =>
+	/**
+	 * Gets glitch object
+	 * @param {String} key - Key of glitch object
+	 * @returns {Object} A glitch object
+	 */
+	const get = (key) => glitchObjs[key];
+
+	/**
+	 * Sets string in glitch object
+	 * @param {String} key - Key of glitch object
+	 * @param {String} str - Text to replace or add
+	 * @param {Boolean} append - Boolean to check if str should be appended to current text
+	 */
+	const set = (key, str, append = false) =>
 	{
-		requestAnimationFrame(mainLoop);
+		const glitchObj = glitchObjs[key]
+		if (!glitchObj) return;
+		if (!append) glitchObj.text = '';
 
-		for (const key in nodes)
+		glitchObj.newText = str;
+	}
+
+	const loop = () =>
+	{
+		requestAnimationFrame(loop);
+
+		for (const key in glitchObjs)
 		{
-			const { elem, text } = nodes[key];
-			const glitchyStr = text.split('').map(char =>
-			{
-				if (getRandInt(0, 10) <= 5) return getRandChar();
-				else return char;
-			})
-				.join('');
+			const glitchObj = glitchObjs[key];
 
-			elem.textContent = glitchyStr;
+			// run if curFrame is 0
+			if (!glitchObj.curFrame)
+			{
+				// Add first char to text
+				if (glitchObj.newText)
+				{
+					glitchObj.text += glitchObj.newText[0];
+					glitchObj.newText = glitchObj.newText.slice(1);
+				}
+				else glitchObj.newText = null;
+
+				// Replace some chars with random char
+				const glitchyStr = glitchObj.text.split('').map(char =>
+				{
+					if (getRandInt(1, glitchObj.chance) === 1) return getRandChar();
+					else return char;
+				}).join('');
+
+				glitchObj.elem.textContent = glitchyStr;
+				glitchObj.curFrame = glitchObj.speed;
+			}
+			else --glitchObj.curFrame;
 		}
 	}
 
 	// Start loop
-	requestAnimationFrame(mainLoop);
+	requestAnimationFrame(loop);
 
 	return {
 		register,
 		unregister,
+		get,
 		set,
 	}
 })()
-
-// const glitcher = (() =>
-// {
-// 	const getRandInt = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
-
-// 	const getRandChar = (() =>
-// 	{
-// 		const charPool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-// 		const charPoolLen = charPool.length;
-
-// 		return () => charPool[getRandInt(0, charPoolLen - 1)];
-// 	})()
-
-// 	const writeTo = (node, text) => node.textContent = text;
-
-// 	const replaceAtIndex = (str, replacementStr, index) => 
-// 	{
-// 		const start = str.substr(0, index);
-// 		const end = str.substr(index + 1, str.length - 1);
-// 		return start + replacementStr + end;
-// 	}
-
-// 	const start = (node, clear, glitchEnd) =>
-// 	{
-// 		if (clear) node.textContent = '';
-// 		return setInterval(() =>
-// 		{
-// 			let string = node.textContent;
-
-// 			for (const [i, char] of Object.entries(string))
-// 			{
-// 				if (char !== ' ')
-// 				{
-// 					if ((glitchEnd && +i === string.length - 1) || getRandInt(0, 6) === 0)
-// 					{
-// 						{
-// 							const randChar = getRandChar();
-// 							string = replaceAtIndex(string, randChar, +i);
-// 						}
-// 					}
-// 				}
-// 			}
-
-// 			writeTo(node, string);
-// 		}, 50);
-// 	}
-
-// 	const close = (node, interval, str) =>
-// 	{
-// 		clearInterval(interval);
-// 		writeTo(node, str);
-// 	}
-
-// 	return (node, str = '', clear, glitchEnd) =>
-// 	{
-// 		let interval = start(node, clear, glitchEnd);
-// 		let currString = str;
-
-// 		return {
-// 			close: () => close(node, interval, currString),
-
-// 			update: (str) =>
-// 			{
-// 				currString = str;
-// 				writeTo(node, str);
-// 			},
-// 		}
-// 	}
-// })()

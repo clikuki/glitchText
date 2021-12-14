@@ -8,9 +8,13 @@ const stringPool = [
 	'I\'m running out of things to write',
 ]
 
-const glitchedDiv = document.querySelector('#glitchedDiv');
+const glitchDiv = document.querySelector('#glitchedDiv');
 const demoBtn = document.querySelector('#demoBtn');
-const glitchKey = glitchText.register(glitchedDiv);
+const glitchKey = glitchText.register(glitchDiv, {
+	speed: 4,
+	chance: 10,
+});
+
 const getRandInt = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
 
 demoBtn.addEventListener('click', () =>
