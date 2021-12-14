@@ -40,7 +40,7 @@ const glitchText = (() =>
 	}
 
 	/**
-	 * Deletes glitch object
+	 * Unregisters node as a glitch object.
 	 * @param {String} key - Key of glitch object
 	 */
 	const unregister = (key) =>
