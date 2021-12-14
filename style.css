@@ -29,6 +29,7 @@ main {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	gap: 1rem;
 }
 
 footer {
@@ -49,13 +50,6 @@ a {
 #title,
 #description {
 	text-align: center;
-}
-
-#glitchDivContainer {
-	flex-grow: 0.5;
-	display: flex;
-	justify-content: center;
-	align-items: center;
 }
 
 #glitchedDiv {
