@@ -73,12 +73,12 @@ const glitchText = (() =>
 		if (!glitch) return;
 		if (!append) glitch.deleteChars = glitch.text.length;
 
-		glitch.newText = str;
+		glitch.textToAdd = str;
 	}
 
-	const glitchify = (glitch) => glitch.text.split('').map(char =>
+	const glitchify = (text, chance) => text.split('').map(char =>
 	{
-		if (getRandInt(1, glitch.chance) === 1) return getRandChar();
+		if (getRandInt(1, chance) === 1) return getRandChar();
 		else return char;
 	}).join('');
 
@@ -89,27 +89,31 @@ const glitchText = (() =>
 		for (const key in glitchObjRegistry)
 		{
 			const glitch = glitchObjRegistry[key];
+			const elem = glitch.elem;
 
-			// run if curFrame is 0
 			if (!glitch.curFrame)
 			{
-				if (glitch.deleteChars)
+				if (!glitch.deleteChars)
 				{
-					--glitch.deleteChars;
-					const prevText = glitch.text;
-					glitch.text = prevText.slice(0, -1);
+					if (glitch.textToAdd)
+					{
+						glitch.text += glitch.textToAdd[0];
+						glitch.textToAdd = glitch.textToAdd.slice(1);
+					}
+					else glitch.textToAdd = null;
 				}
-				else if (glitch.newText)
-				{
-					glitch.text += glitch.newText[0];
-					glitch.newText = glitch.newText.slice(1);
-				}
-				else glitch.newText = null;
 
-				glitch.elem.textContent = glitchify(glitch);
+				elem.textContent = glitchify(glitch.text, glitch.chance);
 				glitch.curFrame = glitch.speed;
 			}
-			else --glitch.curFrame;
+			else glitch.curFrame--;
+
+			if (glitch.deleteChars)
+			{
+				glitch.deleteChars--;
+				glitch.text = glitch.text.slice(0, -1);
+				elem.textContent = elem.textContent.slice(0, -1);
+			}
 		}
 	}
 
