@@ -1,16 +1,26 @@
 # GlitchText.js
 
-A small library that makes text look glitchy!
-[Demonstration here!](https://clikuki.github.io/glitchText/)
-Note: monospace fonts work best as the non-monospace characters have different widths
+A small library that makes text look glitchy!   
+
+[Demonstration here!](https://clikuki.github.io/glitchText/)   
+
+Note: monospace fonts work best as the non-monospace characters have different widths and cause the paragraph change size   
 
 # Quick setup
 1. Download glitchText.js and link it to your HTML file
+```HTML
+<script src="./lib/glitchText.js"></script>
+```
 2. Use glitchText.register to turn an element glitchy
-> `Const key = glitchText.register(node, options)`
-3. Use glitchText.set to set text
-> `glitchText.set(key, str)`
-4. Watch as glitchy text appears!
+```js
+Const key = glitchText.register(node, options)
+```   
+3. Use glitchText.set to set text   
+```js
+Const key = glitchText.register(node, options)
+glitchText.set(key, str)
+```   
+5. Watch as glitchy text appears!
 
 # Methods
 
