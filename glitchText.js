@@ -6,28 +6,16 @@ const glitchText = (() =>
 	// Some functions to help with random strings and numbers
 	const getRandInt = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
 	const getRandChar = () => charPool[getRandInt(0, charPool.length - 1)];
-	const getRandStr = (len) =>
-	{
-		let str = '';
-		for (let i = 0; i < len; i++)
-		{
-			str += getRandChar();
-		}
-
-		return str;
-	}
 
 	/**
 	 * Registers node as a glitch object
 	 * @param {HTMLElement} node - Node to put text in
 	 * @param {Object} options - Options for glitch effect
-	 * @returns {String} Key of glitch object
+	 * @returns {Symbol} the key of the glitch object
 	 */
 	const register = (node, options = {}) =>
 	{
-		// Make sure key is unique
-		let key;
-		while (!key || glitchObjRegistry[key]) key = getRandStr(20);
+		const key = Symbol();
 
 		glitchObjRegistry[key] = {
 			elem: node,
@@ -41,7 +29,7 @@ const glitchText = (() =>
 
 	/**
 	 * Unregisters node as a glitch object.
-	 * @param {String} key - Key of glitch object
+	 * @param {Symbol} key - Key of glitch object
 	 */
 	const unregister = (key) =>
 	{
@@ -56,14 +44,14 @@ const glitchText = (() =>
 
 	/**
 	 * Gets glitch object
-	 * @param {String} key - Key of glitch object
+	 * @param {Symbol} key - Key of glitch object
 	 * @returns {Object} A glitch object
 	 */
 	const get = (key) => glitchObjRegistry[key];
 
 	/**
 	 * Sets string in glitch object
-	 * @param {String} key - Key of glitch object
+	 * @param {Symbol} key - Key of glitch object
 	 * @param {String} str - Text to replace or add
 	 * @param {Boolean} append - Boolean to check if str should be appended to current text
 	 */
@@ -86,7 +74,7 @@ const glitchText = (() =>
 	{
 		requestAnimationFrame(loop);
 
-		for (const key in glitchObjRegistry)
+		for (const key of Object.getOwnPropertySymbols(glitchObjRegistry))
 		{
 			const glitch = glitchObjRegistry[key];
 			const elem = glitch.elem;
